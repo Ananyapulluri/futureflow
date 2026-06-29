@@ -2,7 +2,7 @@
 // Change this to your Render backend URL after deploying
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:5000'
-  : 'https://your-futureflow-api.onrender.com'; // ← update after Render deploy
+  : 'https://futureflow-uux9.onrender.com'; 
 
 // ── STATE ─────────────────────────────────────────────────
 let sessionOrders = [];
