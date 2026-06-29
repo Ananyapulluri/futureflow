@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutureFlow — Binance Futures Trading</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-mark">FF</span>
+      <span class="logo-text">FutureFlow</span>
+    </div>
+    <nav class="nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item" data-page="trade">
+        <svg viewBox="0 0 24 24"><path d="M3 17l4-8 4 4 4-6 4 4"/><path d="M21 21H3"/></svg>
+        Place Order
+      </a>
+      <a href="#" class="nav-item" data-page="history">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        Order History
+      </a>
+      <a href="#" class="nav-item" data-page="balance">
+        <svg viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7"/><path d="M16 19h6m-3-3v6"/></svg>
+        Balance
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="network-badge">
+        <span class="dot"></span>
+        Testnet
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle">
+          <span></span><span></span><span></span>
+        </button>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="live-price" id="livePrice">
+          <span class="price-label">BTC/USDT</span>
+          <span class="price-value" id="btcPrice">—</span>
+        </div>
+        <div class="refresh-btn" id="refreshBtn" title="Refresh">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGES -->
+
+    <!-- DASHBOARD PAGE -->
+    <section class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Balance</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub">USDT</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Available</div>
+          <div class="stat-value" id="stat-available">—</div>
+          <div class="stat-sub">USDT</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Orders Placed</div>
+          <div class="stat-value" id="stat-orders">0</div>
+          <div class="stat-sub">this session</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-label">Bot Status</div>
+          <div class="stat-value status-live">LIVE</div>
+          <div class="stat-sub">Testnet connected</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card quick-trade">
+          <div class="card-header">
+            <h2>Quick Trade</h2>
+            <span class="card-tag">Testnet</span>
+          </div>
+          <div class="quick-form">
+            <div class="symbol-row">
+              <select class="input" id="q-symbol">
+                <option>BTCUSDT</option>
+                <option>ETHUSDT</option>
+                <option>BNBUSDT</option>
+                <option>SOLUSDT</option>
+              </select>
+              <div class="side-toggle">
+                <button class="side-btn buy active" id="q-buy">BUY</button>
+                <button class="side-btn sell" id="q-sell">SELL</button>
+              </div>
+            </div>
+            <input type="number" class="input" id="q-qty" placeholder="Quantity (e.g. 0.001)" step="0.001" />
+            <div class="action-row">
+              <button class="btn btn-ghost" id="q-dryrun">Dry Run</button>
+              <button class="btn btn-primary" id="q-market">Market Order</button>
+            </div>
+          </div>
+          <div class="quick-result hidden" id="q-result"></div>
+        </div>
+
+        <div class="card recent-orders">
+          <div class="card-header">
+            <h2>Recent Orders</h2>
+          </div>
+          <div class="orders-list" id="dash-orders">
+            <div class="empty-state">No orders placed yet this session.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACE ORDER PAGE -->
+    <section class="page" id="page-trade">
+      <div class="trade-layout">
+        <div class="card order-form-card">
+          <div class="card-header">
+            <h2>Place Order</h2>
+            <label class="dry-toggle">
+              <input type="checkbox" id="dryRunToggle" />
+              <span>Dry Run</span>
+            </label>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Symbol</label>
+              <select class="input" id="t-symbol">
+                <option>BTCUSDT</option>
+                <option>ETHUSDT</option>
+                <option>BNBUSDT</option>
+                <option>SOLUSDT</option>
+                <option>XRPUSDT</option>
+                <option>DOGEUSDT</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Order Type</label>
+              <select class="input" id="t-type">
+                <option value="MARKET">MARKET</option>
+                <option value="LIMIT">LIMIT</option>
+                <option value="STOP_MARKET">STOP MARKET</option>
+                <option value="TAKE_PROFIT_MARKET">TAKE PROFIT</option>
+              </select>
+            </div>
+
+            <div class="form-group full">
+              <label>Side</label>
+              <div class="side-toggle large">
+                <button class="side-btn buy active" id="t-buy">BUY / LONG</button>
+                <button class="side-btn sell" id="t-sell">SELL / SHORT</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" class="input" id="t-qty" placeholder="e.g. 0.001" step="0.001" />
+            </div>
+
+            <div class="form-group" id="price-group">
+              <label>Limit Price (USDT)</label>
+              <input type="number" class="input" id="t-price" placeholder="e.g. 50000" />
+            </div>
+
+            <div class="form-group hidden" id="stop-group">
+              <label>Stop / Trigger Price (USDT)</label>
+              <input type="number" class="input" id="t-stop" placeholder="e.g. 45000" />
+            </div>
+          </div>
+
+          <div class="order-summary" id="order-summary">
+            <div class="summary-row"><span>Symbol</span><span id="s-symbol">—</span></div>
+            <div class="summary-row"><span>Side</span><span id="s-side">—</span></div>
+            <div class="summary-row"><span>Type</span><span id="s-type">—</span></div>
+            <div class="summary-row"><span>Quantity</span><span id="s-qty">—</span></div>
+            <div class="summary-row" id="s-price-row"><span>Price</span><span id="s-price">—</span></div>
+          </div>
+
+          <button class="btn btn-primary full-btn" id="placeOrderBtn">Place Order</button>
+
+          <div class="result-box hidden" id="t-result"></div>
+        </div>
+
+        <div class="card info-card">
+          <div class="card-header"><h2>Order Types</h2></div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-title">MARKET</div>
+              <div class="info-desc">Executes immediately at the best available price.</div>
+            </div>
+            <div class="info-item">
+              <div class="info-title">LIMIT</div>
+              <div class="info-desc">Executes only at your specified price or better.</div>
+            </div>
+            <div class="info-item">
+              <div class="info-title">STOP MARKET</div>
+              <div class="info-desc">Triggers a market order when the stop price is reached. Used for stop-loss.</div>
+            </div>
+            <div class="info-item">
+              <div class="info-title">TAKE PROFIT</div>
+              <div class="info-desc">Triggers a market order to close position at profit when price is reached.</div>
+            </div>
+          </div>
+          <div class="testnet-note">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            All orders are placed on Binance Futures <strong>Testnet</strong>. No real funds are used.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER HISTORY PAGE -->
+    <section class="page" id="page-history">
+      <div class="card full-card">
+        <div class="card-header">
+          <h2>Order History</h2>
+          <button class="btn btn-ghost btn-sm" id="clearHistory">Clear</button>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Symbol</th>
+                <th>Side</th>
+                <th>Type</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Order ID</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="8" class="empty-td">No orders yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- BALANCE PAGE -->
+    <section class="page" id="page-balance">
+      <div class="balance-layout">
+        <div class="card balance-card">
+          <div class="card-header">
+            <h2>Account Balance</h2>
+            <button class="btn btn-ghost btn-sm" id="refreshBalance">Refresh</button>
+          </div>
+          <div class="balance-display" id="balanceDisplay">
+            <div class="balance-loading">Fetching balance...</div>
+          </div>
+        </div>
+        <div class="card info-card">
+          <div class="card-header"><h2>About Testnet</h2></div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-title">What is Testnet?</div>
+              <div class="info-desc">Binance Futures Testnet is a sandbox environment with fake USDT. All orders and balances are simulated — no real money involved.</div>
+            </div>
+            <div class="info-item">
+              <div class="info-title">Get Testnet Funds</div>
+              <div class="info-desc">Visit testnet.binancefuture.com → log in → click "Get 10,000 USDT" to fund your testnet account.</div>
+            </div>
+            <div class="info-item">
+              <div class="info-title">API Keys</div>
+              <div class="info-desc">Testnet API keys are separate from your real Binance account. Generate them at testnet.binancefuture.com.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
